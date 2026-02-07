@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-REPO="https://raw.githubusercontent.com/duclonghoang/server-scripts/main"
+REPO="https://raw.githubusercontent.com/DucLongHoang/server-scripts/refs/heads/master"
 
 echo "=== Running setup-user.sh ==="
 curl -sSL "${REPO}/setup-user.sh" | bash
