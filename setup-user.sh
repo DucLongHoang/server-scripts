@@ -1,19 +1,13 @@
 #!/usr/bin/env bash
 #
-# Hetzner VPS Initial Setup Script
-# Run as root: ssh root@<ip> 'bash -s' < setup-user.sh
-#
-# What this does:
-#   1. Creates a user with sudo privileges
-#   2. Copies root's authorized_keys to the new user
-#   3. Hardens SSH (disable root login, disable password auth)
-#   4. Sets a password for emergency Hetzner console access
-#
-# Prerequisites:
-#   - SSH key selected during Hetzner server creation
+# Hetzner VPS User Setup Script
+# Called by bootstrap.sh — expects SETUP_USERNAME and SETUP_PASSWORD env vars
 #
 
 set -euo pipefail
+
+USERNAME="${SETUP_USERNAME:-}"
+PASSWORD="${SETUP_PASSWORD:-}"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -25,6 +19,8 @@ warn() { echo -e "${YELLOW}[!]${NC} $1"; }
 err() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 
 [[ "$(id -u)" -eq 0 ]] || err "Must be run as root"
+[[ -n "${USERNAME}" ]] || err "SETUP_USERNAME not set"
+[[ -n "${PASSWORD}" ]] || err "SETUP_PASSWORD not set"
 [[ -f /root/.ssh/authorized_keys ]] || err "No SSH key found in /root/.ssh/authorized_keys"
 
 # --- Detect SSH service name ---
@@ -36,14 +32,7 @@ else
   err "Could not find SSH service"
 fi
 
-# --- Ask for username ---
-read -rp "Enter username to create: " USERNAME
-[[ -n "${USERNAME}" ]] || err "Username cannot be empty"
-[[ "${USERNAME}" =~ ^[a-z_][a-z0-9_-]*$ ]] || err "Invalid username: use lowercase letters, numbers, hyphens, underscores"
-
-echo ""
 log "Setting up user '${USERNAME}' with SSH service '${SSH_SERVICE}'"
-echo ""
 
 # --- System update ---
 log "Updating system packages..."
@@ -55,8 +44,12 @@ if id "${USERNAME}" &>/dev/null; then
 else
   log "Creating user '${USERNAME}'..."
   useradd -m -s /bin/bash -G sudo "${USERNAME}"
-  passwd -l "${USERNAME}"
 fi
+
+# --- Set password (for Hetzner console emergency access) ---
+log "Setting password for '${USERNAME}' (Hetzner console emergency access)..."
+echo "${USERNAME}:${PASSWORD}" | chpasswd
+warn "SSH password login will be disabled — this password is for console access only"
 
 # --- SSH keys ---
 log "Copying SSH keys to '${USERNAME}'..."
@@ -71,11 +64,6 @@ chown -R "${USERNAME}:${USERNAME}" "${USER_HOME}/.ssh"
 log "Configuring passwordless sudo..."
 echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USERNAME}"
 chmod 440 "/etc/sudoers.d/${USERNAME}"
-
-# --- Set password for Hetzner console emergency access ---
-warn "Set a password for '${USERNAME}' (for Hetzner console emergency access only):"
-warn "SSH password login remains disabled."
-passwd "${USERNAME}"
 
 # --- Harden SSH ---
 log "Hardening SSH..."
@@ -108,7 +96,7 @@ log "SSH hardened and restarted (${SSH_SERVICE}.service)"
 
 echo ""
 echo "=========================================="
-echo " Setup Complete"
+echo " User Setup Complete"
 echo "=========================================="
 echo ""
 echo " Test in a NEW terminal:"
