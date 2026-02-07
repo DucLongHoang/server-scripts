@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 #
 # Docker + Docker Compose Setup Script
-# Installs Docker Engine and adds user 'long' to the docker group
-# so containers can be managed without sudo.
-#
-# Run as root or via bootstrap.sh
+# Called by bootstrap.sh — expects SETUP_USERNAME env var
 #
 
 set -euo pipefail
 
-USERNAME="long"
+USERNAME="${SETUP_USERNAME:-}"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -19,6 +16,7 @@ log() { echo -e "${GREEN}[✓]${NC} $1"; }
 err() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 
 [[ "$(id -u)" -eq 0 ]] || err "Must be run as root"
+[[ -n "${USERNAME}" ]] || err "SETUP_USERNAME not set"
 
 # --- Install prerequisites ---
 log "Installing prerequisites..."
@@ -64,10 +62,6 @@ echo "=========================================="
 echo ""
 echo " '${USERNAME}' can now run docker without sudo."
 echo ""
-echo " ⚠  If already logged in as '${USERNAME}',"
-echo "    log out and back in for group to apply,"
+echo " ⚠  Log out and back in for group to apply,"
 echo "    or run: newgrp docker"
-echo ""
-echo " Test with:"
-echo "   docker run --rm hello-world"
 echo "=========================================="
