@@ -5,7 +5,7 @@ Opinionated setup scripts for bootstrapping a fresh Hetzner VPS. Creates a non-r
 ## Usage
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/duclonghoang/server-scripts/main/bootstrap.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/DucLongHoang/server-scripts/refs/heads/master/bootstrap.sh | sudo bash
 ```
 
 ## What's included
