@@ -24,9 +24,9 @@ err() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 [[ -f /root/.ssh/authorized_keys ]] || err "No SSH key found in /root/.ssh/authorized_keys"
 
 # --- Detect SSH service name ---
-if systemctl list-units --type=service --all | grep -q 'sshd.service'; then
+if systemctl list-unit-files | grep -q 'sshd.service'; then
   SSH_SERVICE="sshd"
-elif systemctl list-units --type=service --all | grep -q 'ssh.service'; then
+elif systemctl list-unit-files | grep -q 'ssh.service'; then
   SSH_SERVICE="ssh"
 else
   err "Could not find SSH service"
