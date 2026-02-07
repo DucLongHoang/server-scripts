@@ -26,7 +26,18 @@ curl -sSL "${REPO}/setup-security.sh" | bash
 echo "=== Running setup-docker.sh ==="
 curl -sSL "${REPO}/setup-docker.sh" | bash
 
-echo "=== Running setup-zsh.sh ==="
-curl -sSL "${REPO}/setup-zsh.sh" | su - "${USERNAME}" -c 'bash -s'
-
-echo "=== All done ==="
+echo ""
+echo "=========================================="
+echo " Bootstrap Complete!"
+echo "=========================================="
+echo ""
+echo " 1. Test SSH in a new terminal:"
+echo "    ssh ${USERNAME}@<server-ip>"
+echo ""
+echo " 2. Then run the zsh setup as ${USERNAME}:"
+echo "    curl -sSL ${REPO}/setup-zsh.sh | bash"
+echo ""
+echo " 3. Reboot to load the new kernel:"
+echo "    sudo reboot"
+echo ""
+echo "=========================================="
