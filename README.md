@@ -5,10 +5,7 @@ Opinionated setup scripts for bootstrapping a fresh Hetzner VPS. Creates a non-r
 ## Usage
 
 ```bash
-git clone https://github.com/duclonghoang/server-scripts.git /tmp/setup
-cd /tmp/setup
-sudo bash bootstrap.sh
-rm -rf /tmp/setup
+curl -sSL https://raw.githubusercontent.com/duclonghoang/server-scripts/main/bootstrap.sh | sudo bash
 ```
 
 ## What's included
@@ -17,7 +14,7 @@ rm -rf /tmp/setup
 |--------|---------|
 | `bootstrap.sh` | Orchestrator — runs all scripts in order |
 | `setup-user.sh` | Creates user, copies SSH keys, hardens sshd |
-| `harden-vps.sh` | UFW firewall + fail2ban with progressive banning |
+| `setup-security.sh` | UFW firewall + fail2ban with progressive banning |
 | `setup-docker.sh` | Docker Engine + Compose plugin, rootless for user |
 | `setup-zsh.sh` | Zsh + Oh My Zsh |
 
