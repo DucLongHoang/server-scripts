@@ -23,15 +23,7 @@ err() { echo -e "${RED}[✗]${NC} $1"; exit 1; }
 [[ -n "${PASSWORD}" ]] || err "SETUP_PASSWORD not set"
 [[ -f /root/.ssh/authorized_keys ]] || err "No SSH key found in /root/.ssh/authorized_keys"
 
-# --- Detect SSH service name ---
-if systemctl list-unit-files | grep -q 'sshd.service'; then
-  SSH_SERVICE="sshd"
-elif systemctl list-unit-files | grep -q 'ssh.service'; then
-  SSH_SERVICE="ssh"
-else
-  err "Could not find SSH service"
-fi
-
+SSH_SERVICE="ssh"
 log "Setting up user '${USERNAME}' with SSH service '${SSH_SERVICE}'"
 
 # --- System update ---
